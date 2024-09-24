@@ -1,6 +1,9 @@
-#inicializa o PORTA D do EV3 para funcionar com um servo motor comum (aquele de aeromodelismo)
-#utilizamos os pinos: 5V, GND e o pino 1 (pwm)
+#inicializa os portas do EV3 para funcionar com um servo motor comum (aquele de aeromodelismo)
+#utilizamos os dois pinos pwm de cada porta para controlar dois servos por porta
 #o pino de sinal do servo, o pino 1 deve ser ligado no servo com um dividor de tensão entre o gnd e o pino de sinal, pois o pino de sinal sai a tensão da bateria, o que queimará o servo. Coloque um dividor, uns 10k cada resistencia deve servir.
+#devido a limitação de cada porta do lego possuir apenas 1 pino de pwm, só da pra controlar um servo por vez em cada porta. 
+#então enquanto um servo é controlador, o outro fica livre. É importante pensar nisso e não ligar dois servos que devem ser movidos juntos na mesma porta do lego
+
 
 # porta D
 sh -c 'echo ev3-ports:outD > /sys/class/lego-port/port7/device/driver/unbind'
