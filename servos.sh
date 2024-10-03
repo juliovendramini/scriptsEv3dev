@@ -46,6 +46,10 @@ sh -c 'echo 20000000 > /sys/class/pwm/pwmchip5/pwm0/period'
 sh -c 'echo 1 > /sys/class/pwm/pwmchip5/pwm0/enable'
 
 
+chmod 777 /sys/class/pwm/pwmchip0/pwm0/*
+chmod 777 /sys/class/pwm/pwmchip1/pwm0/*
+
+
 #para controlar o servo o arquio abaixo deve ser editado enviando um valor do duty_cycle que eh a posicao.
 #sh -c 'echo 610000 > /sys/class/pwm/pwmchip1/pwm0/duty_cycle' (minimo)
 #sh -c 'echo 2400000 > /sys/class/pwm/pwmchip1/pwm0/duty_cycle' (maximo)
