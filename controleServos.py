@@ -13,111 +13,183 @@ import os
 # Click "Open user guide" on the EV3 extension tab for more information.
 
 
-def vaParaAnguloServo1(valor):
+def vaParaAnguloServo1(valor): #abrir porta
     desativaServo2()
+    #wait(100)
     valorBase=9945
     anguloGarra=610000+(valorBase*valor)
+    '''duty_cycle = open("/sys/class/pwm/pwmchip1/pwm0/duty_cycle", 'w')
+    duty_cycle.write(str(anguloGarra))
+    duty_cycle.close()'''
     os.system("sh -c 'echo %d > /sys/class/pwm/pwmchip1/pwm0/duty_cycle'" %anguloGarra)
     usaServo1()
 
-def vaParaAnguloServo2(valor):
+def vaParaAnguloServo2(valor):#garra direita
     desativaServo1()
+    #wait(100)
     valorBase=9945
     anguloGarra=610000+(valorBase*valor)
+    '''duty_cycle = open("/sys/class/pwm/pwmchip1/pwm0/duty_cycle", 'w')
+    duty_cycle.write(str(anguloGarra))
+    duty_cycle.close()'''
     os.system("sh -c 'echo %d > /sys/class/pwm/pwmchip1/pwm0/duty_cycle'" %anguloGarra)
     usaServo2()
 
-def vaParaAnguloServo3(valor):
+
+def vaParaAnguloServo3(valor):#Subir garra
     desativaServo4()
+    #wait(100)
     valorBase=9945
     anguloGarra=610000+(valorBase*valor)
+    '''duty_cycle = open("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", 'w')
+    duty_cycle.write(str(anguloGarra))
+    duty_cycle.close()'''
     os.system("sh -c 'echo %d > /sys/class/pwm/pwmchip0/pwm0/duty_cycle'" %anguloGarra)
     usaServo3()
 
-def vaParaAnguloServo4(valor):
+def vaParaAnguloServo4(valor):#garra esquerda
     desativaServo3()
+    #wait(100)
     valorBase=9945
     anguloGarra=610000+(valorBase*valor)
+    '''duty_cycle = open("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", 'w')
+    duty_cycle.write(str(anguloGarra))
+    duty_cycle.close()'''
     os.system("sh -c 'echo %d > /sys/class/pwm/pwmchip0/pwm0/duty_cycle'" %anguloGarra)
     usaServo4()
 
     
 def usaServo1():
-    '''os.system("sh -c 'echo out > /sys/class/gpio/gpio90/direction'")
-    wait(20)
-    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio90/value'")'''
+    '''direction = open("/sys/class/gpio/gpio90/direction", 'w')
+    direction.write('out')
+    direction.close()'''
+    #os.system("sh -c 'echo out > /sys/class/gpio/gpio90/direction'")
+    #wait(20)
+    '''value = open("/sys/class/gpio/gpio90/value", 'w')
+    value.write('1')
+    value.close()'''
+    #os.system("sh -c 'echo 1 > /sys/class/gpio/gpio90/value'")
+    '''direction = open("/sys/class/gpio/gpio83/direction", 'w')
+    direction.write('in')
+    direction.close()'''
     os.system("sh -c 'echo in > /sys/class/gpio/gpio83/direction'")
 
-def usaServo2():
-    '''os.system("sh -c 'echo out > /sys/class/gpio/gpio83/direction'")
-    wait(20)
-    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio83/value'")'''
-    os.system("sh -c 'echo in > /sys/class/gpio/gpio90/direction'")
-    
-def usaServo3():
-    '''os.system("sh -c 'echo out > /sys/class/gpio/gpio89/direction'")
-    wait(20)
-    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio89/value'")'''
-    os.system("sh -c 'echo in > /sys/class/gpio/gpio104/direction'")
-
-def usaServo4():
-    '''os.system("sh -c 'echo out > /sys/class/gpio/gpio104/direction'")
-    wait(20)
-    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio104/value'")'''
-    os.system("sh -c 'echo in > /sys/class/gpio/gpio89/direction'")
-
-
-def inicializaServos():
-    #ativa os pwms
-    desativaServos();
-    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip1/pwm0/enable'")
-    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable'")
-
-def desativaServos():
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio90/direction'") #servo 2
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio83/direction'") #servo 1
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio89/direction'") #servo 4
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio104/direction'") #servo 3
-    #os.system("sh -c 'echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable'")
-    #os.system("sh -c 'echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable'")
-    #wait(20)
+def desativaServo2():
+    os.system("sh -c 'echo out > /sys/class/gpio/gpio90/direction'")
+    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio90/value'")
 
 def desativaServo1():
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio83/direction'") #servo 1
+    os.system("sh -c 'echo out > /sys/class/gpio/gpio83/direction'")
+    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio83/value'")
 
-def desativaServo2():
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio90/direction'") #servo 2
+def usaServo2():
+    '''direction = open("/sys/class/gpio/gpio83/direction", 'w')
+    direction.write('out')
+    direction.close()'''
+    #os.system("sh -c 'echo out > /sys/class/gpio/gpio83/direction'")
+   # wait(20)
+    '''value = open("/sys/class/gpio/gpio83/value", 'w')
+    value.write('1')
+    value.close()'''
+    #os.system("sh -c 'echo 1 > /sys/class/gpio/gpio83/value'")
+    '''direction = open("/sys/class/gpio/gpio90/direction", 'w')
+    direction.write('in')
+    direction.close()'''
+    os.system("sh -c 'echo in > /sys/class/gpio/gpio90/direction'")
+    
+
+def usaServo4():
+    '''direction = open("/sys/class/gpio/gpio104/direction", 'w')
+    direction.write('out')
+    direction.close()'''
+    #os.system("sh -c 'echo out > /sys/class/gpio/gpio104/direction'")
+  #  wait(20)
+    '''value = open("/sys/class/gpio/gpio104/value", 'w')
+    value.write('1')
+    value.close()'''
+    #os.system("sh -c 'echo 1 > /sys/class/gpio/gpio104/value'")
+    '''direction = open("/sys/class/gpio/gpio89/direction", 'w')
+    direction.write('in')
+    direction.close()'''
+    os.system("sh -c 'echo in > /sys/class/gpio/gpio89/direction'")
 
 def desativaServo3():
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio104/direction'") #servo 3
+    os.system("sh -c 'echo out > /sys/class/gpio/gpio104/direction'")
+    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio104/value'")
 
 def desativaServo4():
-    os.system("sh -c 'echo out > /sys/class/gpio/gpio89/direction'") #servo 4
+    os.system("sh -c 'echo out > /sys/class/gpio/gpio89/direction'")
+    os.system("sh -c 'echo 1 > /sys/class/gpio/gpio89/value'")
 
-def finalizaServos():
-    desativaServos()
+
+def usaServo3():
+    '''direction = open("/sys/class/gpio/gpio89/direction", 'w')
+    direction.write('out')
+    direction.close()'''
+    #os.system("sh -c 'echo out > /sys/class/gpio/gpio89/direction'")
+   # wait(20)
+    '''value = open("/sys/class/gpio/gpio89/value", 'w')
+    value.write('1')
+    value.close()'''
+    #os.system("sh -c 'echo 1 > /sys/class/gpio/gpio89/value'")
+    
+    '''direction = open("/sys/class/gpio/gpio104/direction", 'w')
+    direction.write('in')
+    direction.close()'''
+    os.system("sh -c 'echo in > /sys/class/gpio/gpio104/direction'")
+
+
+def ativaServos():
+    '''enable = open("/sys/class/pwm/pwmchip1/pwm0/enable", 'w')
+    enable.write('1')
+    enable.close()'''
+    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip1/pwm0/enable'")
+    '''enable = open("/sys/class/pwm/pwmchip0/pwm0/enable", 'w')
+    enable.write('1')
+    enable.close()'''
+    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable'")
+   # wait(20)
+
+def ativaServos1_2():
+    '''enable = open("/sys/class/pwm/pwmchip1/pwm0/enable", 'w')
+    enable.write('1')
+    enable.close()'''
+    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip1/pwm0/enable'")
+    # wait(20)
+
+def ativaServos3_4():
+    '''enable = open("/sys/class/pwm/pwmchip0/pwm0/enable", 'w')
+    enable.write('1')
+    enable.close()'''
+    os.system("sh -c 'echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable'")
+    # wait(20)
+
+def desativaServos():
+    '''enable = open("/sys/class/pwm/pwmchip1/pwm0/enable", 'w')
+    enable.write('0')
+    enable.close()'''
     os.system("sh -c 'echo 0 > /sys/class/pwm/pwmchip1/pwm0/enable'")
+    '''enable = open("/sys/class/pwm/pwmchip0/pwm0/enable", 'w')
+    enable.write('0')
+    enable.close()'''
     os.system("sh -c 'echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable'")
+    wait(20)
 
 
 # Create your objects here.
-ev3 = EV3Brick()
-vaParaAnguloServo1(0)
-wait(2000)
-vaParaAnguloServo1(180)
-wait(2000)
-vaParaAnguloServo2(0)
-wait(2000)
-vaParaAnguloServo2(180)
-wait(2000)
-vaParaAnguloServo3(0)
-wait(2000)
-vaParaAnguloServo3(180)
-wait(2000)
-vaParaAnguloServo4(0)
-wait(2000)
-vaParaAnguloServo4(180)
-wait(2000)
-desativaServos()
-# Write your program here.
-ev3.speaker.beep()
+# ev3 = EV3Brick()
+
+
+
+# ativaServos()
+# vaParaAnguloServo1(90)
+# wait(2000)
+# vaParaAnguloServo2(90)
+# wait(2000)
+# vaParaAnguloServo3(90)
+# wait(2000)
+# vaParaAnguloServo4(90)
+# wait(2000)
+# desativaServos()
+# # Write your program here.
+# ev3.speaker.beep()
