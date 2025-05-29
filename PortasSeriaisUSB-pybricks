@@ -15,8 +15,9 @@ salve e coloque ele para ser executável (chmod +x portas.sh)
 agora edite (ou crie) o arquivo rc.local 
 sudo nano /etc/rc.local
 
-
 adicione as seguintes linhas:
+
+#!/bin/bash
 /home/robot/portas.sh
 exit 0
 
