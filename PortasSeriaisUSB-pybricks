@@ -1,0 +1,24 @@
+Para usar as portas seriais S5 e S6 criadas por conversores usb-serial via usb, precisamos substituir o executável do pybricks com o arquivo que está neste repositório
+Copie ele para a pasta /usr/bin.
+
+Após isso, crie um scrip na pasta do usuario, portas.sh
+insira as seguintes linhas no arquivo:
+
+#!/bin/bash
+rm /dev/tty_ev3-ports\:in5
+rm /dev/tty_ev3-ports\:in6
+ln -s /dev/ttyUSB0 /dev/tty_ev3-ports\:in5
+ln -s /dev/ttyUSB1 /dev/tty_ev3-ports\:in6
+
+salve e coloque ele para ser executável (chmod +x portas.sh)
+
+agora edite (ou crie) o arquivo rc.local 
+sudo nano /etc/rc.local
+
+
+adicione as seguintes linhas:
+/home/robot/portas.sh
+exit 0
+
+
+Caso dê algum problema, pelo proprio brickman do ev3dev, execute esse script, ele vai apagar os links criados e criar novamente os links, caso nao resolva, reinicie o brick
