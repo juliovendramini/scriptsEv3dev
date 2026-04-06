@@ -1,4 +1,5 @@
 #!/usr/bin/env pybricks-micropython
+#ATENCAO, NÃO RECOMENDO MAIS O USO DISSO. NÃO FUNCIONA BEM!
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
