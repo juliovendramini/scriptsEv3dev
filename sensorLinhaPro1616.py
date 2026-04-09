@@ -8,9 +8,9 @@ class SensorLinhaPro:
 
     Layout dos 16 bytes recebidos do sensor:
       [0-3]:   Sensores infravermelhos de reflexão (0=branco, 255=preto)
-      [4-7]:   Sensor de cor TCS1       (R, G, B, C)  — valores 0-255
-      [8-11]:  Sensor de cor TCS meio   (R, G, B, C)  — valores 0-255
-      [12-15]: Sensor de cor TCS2       (R, G, B, C)  — valores 0-255
+      [4-7]:   Sensor de cor TCS1       (R, G, B, C)  — valores 0-127
+      [8-11]:  Sensor de cor TCS meio   (R, G, B, C)  — valores 0-127
+      [12-15]: Sensor de cor TCS2       (R, G, B, C)  — valores 0-127
 
     Comunicação binária: envia 1 byte de comando, recebe 16 bytes de dados.
     """
@@ -117,7 +117,7 @@ class SensorLinhaPro:
     # ── Reflexão IR (índices 0-3) ───────────────────────────────────────
 
     def reflexao(self, sensor):
-        """Valor de reflexão do sensor IR (0-3). 0 = branco, 255 = preto."""
+        """Valor de reflexão do sensor IR (0-3)"""
         if 0 <= sensor <= 3:
             return self.lista[sensor]
         return 0
@@ -150,9 +150,9 @@ class SensorLinhaPro:
             return list(self.rgb_para_hsv(rgb[0], rgb[1], rgb[2]))
         return None
 
-    def le_hsv120(self, sensor, valor_maximo=255):
+    def le_hsv120(self, sensor, valor_maximo=127):
         """Retorna [H, S, V] do sensor de cor (1=TCS1, 2=TCS meio, 3=TCS2).
-        H: 0-120, S: 0-120, V: 0-120 (escala estilo Paint clássico do Windows)."""
+        H: 0-120, S: 0-120, V: 0-120"""
         rgb = self.le_rgb(sensor)
         if rgb is not None:
             return list(self.rgb_para_hsv120(rgb[0], rgb[1], rgb[2], valor_maximo))
@@ -208,6 +208,16 @@ class SensorLinhaPro:
     def rgb_para_hsv(r, g, b):
         """Converte RGB (0-255) para HSV.
         Retorna (H: 0-360, S: 0-100, V: 0-100)."""
+        #preciso colocar o valor para 0-255 e garantir q o maximo é 255 para evitar erros de leitura
+        r = r*2
+        g = g*2
+        b = b*2
+        if r > 255:
+            r = 255
+        if g > 255:
+            g = 255
+        if b > 255:
+            b = 255
         r_n = r / 255.0
         g_n = g / 255.0
         b_n = b / 255.0
@@ -233,10 +243,16 @@ class SensorLinhaPro:
         return (round(h), round(s), round(v))
 
     @staticmethod
-    def rgb_para_hsv120(r, g, b, valor_maximo=255):
+    def rgb_para_hsv120(r, g, b, valor_maximo=127):
         """Converte RGB para HSV na escala 0-120 (estilo Paint clássico do Windows).
         Retorna (H: 0-120, S: 0-120, V: 0-120).
-        valor_maximo: valor de referência para normalização (padrão 255)."""
+        valor_maximo: valor de referência para normalização (padrão 127)."""
+        if r > valor_maximo:
+            r = valor_maximo
+        if g > valor_maximo:
+            g = valor_maximo
+        if b > valor_maximo:
+            b = valor_maximo
         r_n = min(r / valor_maximo, 1.0)
         g_n = min(g / valor_maximo, 1.0)
         b_n = min(b / valor_maximo, 1.0)
@@ -267,6 +283,16 @@ class SensorLinhaPro:
     @staticmethod
     def detectar_cor(r, g, b, c):
         """Detecta cor básica a partir de RGBC (0-255). Retorna constante COR_*."""
+        #preciso colocar o valor para 0-255 e garantir q o maximo é 255 para evitar erros de leitura
+        r = r*2
+        g = g*2
+        b = b*2
+        if r > 255:
+            r = 255
+        if g > 255:
+            g = 255
+        if b > 255:
+            b = 255
         if c <= 3 and r < 5 and g < 5 and b < 5:
             return SensorLinhaPro.COR_NADA
         if 3 < c < 25:
