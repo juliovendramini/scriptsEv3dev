@@ -1,31 +1,32 @@
-from pybricks.iodevices import UARTDevice
+import serial
 import threading
 import json
 import time
-''' Essa classe implementa a comunicação serial com o EV3 usando JSON.
+
+''' Essa classe implementa a comunicação serial com o Arduino usando JSON.
     Ela permite enviar e receber atributos de forma assíncrona, com suporte a timeout
     para atributos que não são recebidos em um determinado período.
     A classe utiliza threads para receber dados da porta serial, enviar dados e gerenciar timeouts.
     Ela simplifica o processo de comunicação serial, permitindo que os atributos sejam definidos e obtidos sem preocupação com o sincronismo da comunicação.
+    Requer a biblioteca pyserial: pip install pyserial
 '''
 class ComunicacaoSerialJSON:
     def __init__(self, porta, baudrate=115200, tempoAtributo=2):
-        self.serial = UARTDevice(porta, baudrate, 20)
+        self.serial = serial.Serial(porta, baudrate, timeout=0.1)
         self._atributos = {}
         self._temposAtributos = {}
         self._atributosEnviar = {}
         self._tempoAtributo = tempoAtributo
-        self._ultimaComunicacao = None
         self._executando = True
         self._buffer_recebido = b""
 
-        self._threadReceber = threading.Thread(target=self._loopReceber)
+        self._threadReceber = threading.Thread(target=self._loopReceber, daemon=True)
         self._threadReceber.start()
 
-        self._threadTimeout = threading.Thread(target=self._loopTimeout)
+        self._threadTimeout = threading.Thread(target=self._loopTimeout, daemon=True)
         self._threadTimeout.start()
 
-        self._threadEnviar = threading.Thread(target=self._loopEnviar)
+        self._threadEnviar = threading.Thread(target=self._loopEnviar, daemon=True)
         self._threadEnviar.start()
 
     def _loopReceber(self):
@@ -36,17 +37,18 @@ class ComunicacaoSerialJSON:
                     self._buffer_recebido += dados
                     while b'\n' in self._buffer_recebido:
                         linha, self._buffer_recebido = self._buffer_recebido.split(b'\n', 1)
+                        linha = linha.strip()
                         if linha:
                             try:
                                 obj = json.loads(linha.decode())
-                                self._ultimaComunicacao = time.time()
                                 for chave, valor in obj.items():
                                     self._atributos[chave] = valor
-                                    self._temposAtributos[chave] = self._ultimaComunicacao
+                                    self._temposAtributos[chave] = time.time()
                             except Exception:
                                 pass
             except Exception:
                 pass
+            time.sleep(0.01)
 
     def _loopEnviar(self):
         while self._executando:
@@ -65,12 +67,10 @@ class ComunicacaoSerialJSON:
             for chave in list(self._atributos.keys()):
                 if agora - self._temposAtributos.get(chave, 0) > self._tempoAtributo:
                     self._atributos[chave] = None
-            time.sleep(2)
-
+            time.sleep(0.5)
 
     def definirAtributo(self, chave, valor):
         self._atributosEnviar[chave] = valor
-
 
     def obterAtributo(self, chave):
         x = self._atributos.get(chave, None)
@@ -78,9 +78,9 @@ class ComunicacaoSerialJSON:
             self._atributos[chave] = None
         return x
 
-    #aguarda até que o atributo esteja disponível ou o timeout seja atingido
-    #retorna o valor do atributo se estiver disponível, ou None se o timeout for atingido
-    def aguardarAtributo(self, chave, timeout=2): #tempo em segundos
+    # aguarda até que o atributo esteja disponível ou o timeout seja atingido
+    # retorna o valor do atributo se estiver disponível, ou None se o timeout for atingido
+    def aguardarAtributo(self, chave, timeout=2):  # tempo em segundos
         inicio = time.time()
         while time.time() - inicio < timeout:
             valor = self.obterAtributo(chave)
@@ -89,22 +89,20 @@ class ComunicacaoSerialJSON:
             time.sleep(0.1)
         return None
 
-    #retorna True se o atributo existe e não é None
+    # retorna True se o atributo existe e não é None
     def existeAtributo(self, chave):
         return chave in self._atributos and self._atributos[chave] is not None
 
-    def tempoDesdeUltimaComunicacao(self):
-        """Retorna em segundos quanto tempo faz desde a última comunicação recebida, ou None se nunca recebeu."""
-        if self._ultimaComunicacao is None:
-            return None
-        return time.time() - self._ultimaComunicacao
-
     def fechar(self):
         self._executando = False
-        # UARTDevice não possui método close, mas threads serão finalizadas
+        self._threadReceber.join(timeout=1)
+        self._threadEnviar.join(timeout=1)
+        self._threadTimeout.join(timeout=1)
+        if self.serial.is_open:
+            self.serial.close()
 
     def __getitem__(self, chave):
-        return self.ObterAtributo(chave)
+        return self.obterAtributo(chave)
 
     def __setitem__(self, chave, valor):
-        self.DefinirAtributo(chave, valor)
+        self.definirAtributo(chave, valor)

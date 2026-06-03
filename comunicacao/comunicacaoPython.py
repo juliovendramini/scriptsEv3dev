@@ -18,6 +18,7 @@ class ComunicacaoSerialJSON:
         self._lock = threading.Lock()
         self._lockEnviar = threading.Lock()
         self._tempoAtributo = tempoAtributo
+        self._ultimaComunicacao = None
         self._executando = True
 
         self._threadReceber = threading.Thread(target=self._loopReceber, daemon=True)
@@ -36,9 +37,10 @@ class ComunicacaoSerialJSON:
                 if linha:
                     dados = json.loads(linha.decode())
                     with self._lock:
+                        self._ultimaComunicacao = time.time()
                         for chave, valor in dados.items():
                             self._atributos[chave] = valor
-                            self._temposAtributos[chave] = time.time()
+                            self._temposAtributos[chave] = self._ultimaComunicacao
             except Exception:
                 pass
 
@@ -91,6 +93,13 @@ class ComunicacaoSerialJSON:
     def existeAtributo(self, chave):
         return chave in self._atributos and self._atributos[chave] is not None
 
+
+    def tempoDesdeUltimaComunicacao(self):
+        """Retorna em segundos quanto tempo faz desde a última comunicação recebida, ou None se nunca recebeu."""
+        with self._lock:
+            if self._ultimaComunicacao is None:
+                return None
+            return time.time() - self._ultimaComunicacao
 
     def fechar(self):
         self._executando = False
